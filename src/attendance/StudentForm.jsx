@@ -1,41 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function StudentForm() {
   const [name, setName] = useState("");
   const [faculty, setFaculty] = useState("");
-  const faculties = ["Rohit Jain", "Somesh Sharma"]
+  const [faculties, setFaculties] = useState([]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  useEffect(() => {
+    async function fetchFaculties(){
+      try {
+        const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
+        setFaculties(response.data);
+      } catch (error) {
+        console.log("error");
+      }
+    };
+    fetchFaculties();
+  }, []);  
 
+  async function handleSubmit (e) {
+    e.preventDefault();
     const studentData = { name, faculty };
-
     try {
-      const response = await fetch("https://attendance-backend-mz8q.onrender.com/saveStudent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(studentData),
-      });
-
-      if (response.ok) {
-        console.log({ Message: "Student saved" });
+      const response = await axios.post("https://attendance-backend-mz8q.onrender.com/saveStudent", studentData);
+      if (response.status === 200) {
+        console.log({Message:"Student Saved"});
+        setName("");
+        
       } else {
-        console.log("Failed");
+        console.log("failed");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.log("error");
     }
   };
 
-  // function handleSelectTeacher(e) {
-  //   // setFaculty(faculty);
-  // }
-
   return (
-    <div className="container">
-      <h1>Student Information</h1>
+    <div className="wrapper">
+      <h1>Add Student</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name:</label>
         <input
@@ -45,16 +47,16 @@ function StudentForm() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <label htmlFor="faculty">Select Teachers:</label>
+        <label htmlFor="faculty">Select faculty</label>
         <select
           id="faculty"
-          // value={faculty}
+          value={faculty}
           onChange={(e) => setFaculty(e.target.value)}
+          required
         >
-          {faculties.map((teacher, index) => (
-            <option key={index} value={teacher}>
-              {teacher}
-            </option>
+          <option value="" disabled>Select faculty</option>
+          {faculties.map((teacher) => (
+            <option key={teacher._id} value={teacher.name}>{teacher.name}</option>
           ))}
         </select>
         <button type="submit">Save Student</button>
