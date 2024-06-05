@@ -8,7 +8,7 @@ function FacultyList() {
    async function fetchFaculties() {
       try {
         const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
-        console.log(response); 
+        // console.log(response); 
         if (response.status === 200) {
           setFaculties(response.data);
         } else {
@@ -39,13 +39,13 @@ function FacultyList() {
   };
 
   return (
-    <div className="wrapper">
-      <h1> Fetch Faculty List</h1>
-      <ul>
+    <div className="wrapper max-w-lg mx-auto my-10 p-6 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-6 text-center"> Fetch Faculty List</h1>
+      <ul className="flex flex-col gap-[2rem]">
         {faculties.map((faculty) => (
-          <li key={faculty._id}>
+          <li key={faculty._id} className="flex justify-between items-center p-4 bg-gray-100 rounded-lg">
             {faculty.name} 
-            <button onClick={() => handleDelete(faculty._id)}>Delete</button>
+            <button onClick={() => handleDelete(faculty._id)}  className="bg-red-500 text-white rounded-md px-2 py-1">Delete</button>
           </li>
         ))}
       </ul>

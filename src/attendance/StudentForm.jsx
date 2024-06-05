@@ -36,30 +36,30 @@ function StudentForm() {
   };
 
   return (
-    <div className="wrapper">
-      <h1>Add Student</h1>
+    <div className="wrapper max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-6 text-center">Add Student</h1>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="name">Name:</label>
-        <input
+        <label className="block text-sm font-medium text-gray-700" htmlFor="name">Name:</label>
+        <input 
           type="text"
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          required
+          required  className="mt-1 mb-4 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
-        <label htmlFor="faculty">Select faculty</label>
+        <label  className="block text-sm font-medium text-gray-700" htmlFor="faculty">Select faculty</label>
         <select
           id="faculty"
           value={faculty}
           onChange={(e) => setFaculty(e.target.value)}
-          required
+          required className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm"
         >
           <option value="" disabled>Select faculty</option>
           {faculties.map((teacher) => (
             <option key={teacher._id} value={teacher.name}>{teacher.name}</option>
           ))}
         </select>
-        <button type="submit">Save Student</button>
+        <button   className="bg-green-600 text-white mt-4  flex justify-center m-auto items-center py-2 px-4 text-sm font-medium rounded-md" type="submit">Save Student</button>
       </form>
     </div>
   );
