@@ -11,7 +11,7 @@ function StudentForm() {
     const studentData = { name, faculty };
 
     try {
-      const response = await fetch("http://localhost:3000/saveStudent", {
+      const response = await fetch("https://attendance-backend-mz8q.onrender.com/saveStudent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
