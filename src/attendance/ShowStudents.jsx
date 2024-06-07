@@ -6,10 +6,11 @@ function ShowStudents({ updateData }) {
   const [selectedFaculty, setSelectedFaculty] = useState("");
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
+  const [messageSaved, setMessageSaved] = useState("");
 
   async function fetchFaculties() {
     try {
-      const response = await axios.get("http://localhost:3000/getFaculty");
+      const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
       if (response.status === 200) {
         setTeachers(response.data);
       } else {
@@ -22,13 +23,13 @@ function ShowStudents({ updateData }) {
 
   async function fetchStudents(faculty) {
     try {
-      const response = await axios.get(`http://localhost:3000/getStudent?faculty=${faculty}`);
+      const response = await axios.get(`https://attendance-backend-mz8q.onrender.com/getStudent?faculty=${faculty}`);
       if (response.status === 200) {
         setStudents(response.data);
      
         const initialAttendance = {};
         response.data.forEach(student => {
-          initialAttendance[student._id] = "A";
+          initialAttendance[student._id] = { name: student.name, status: "A" };
         });
         setAttendance(initialAttendance);
       } else {
@@ -49,12 +50,36 @@ function ShowStudents({ updateData }) {
     }
   }, [selectedFaculty]);
 
-  const toggleAttendance = (studentId) => {
+  function toggleAttendance(studentId) {
     setAttendance(prevAttendance => ({
       ...prevAttendance,
-      [studentId]: prevAttendance[studentId] === "A" ? "P" : "A"
+      [studentId]: {
+        ...prevAttendance[studentId],
+        status: prevAttendance[studentId].status === "A" ? "P" : "A"
+      }
     }));
-  };
+  }
+
+  // post 
+  async function submitAttendance() {
+    try {
+      const response = await axios.post("https://attendance-backend-mz8q.onrender.com/saveAttendance", {
+        faculty: selectedFaculty,
+        attendance: attendance
+      });
+      if (response.status === 200) {
+        console.log("Attendance submitted successfully");
+        console.log(response, "response");
+        setMessageSaved("Attendance submitted successfully");
+      } else {
+        console.log("failed");
+        setMessageSaved("Failed to submit attendance");
+      }
+    } catch (error) {
+      console.error("error");
+      setMessageSaved("Error submitting attendance");
+    }
+  }
 
   return (
     <>
@@ -89,11 +114,24 @@ function ShowStudents({ updateData }) {
                     onClick={() => toggleAttendance(student._id)}
                     className="ml-4 px-3 py-1 border rounded-md bg-gray-200"
                   >
-                    {attendance[student._id]}
+                    {attendance[student._id].status}
                   </button>
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+        {students.length > 0 && (
+          <button
+            onClick={submitAttendance}
+            className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md"
+          >
+            Submit Attendance
+          </button>
+        )}
+        {messageSaved && (
+          <div className="mt-4 text-center">
+            <p className=" text-green-700 text-xl font-bold">{messageSaved}</p>
           </div>
         )}
       </div>
@@ -102,5 +140,6 @@ function ShowStudents({ updateData }) {
 }
 
 export default ShowStudents;
+
 
 

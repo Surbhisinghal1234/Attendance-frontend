@@ -11,7 +11,7 @@ function StudentForm({ studentSaved, updateData }) {
   useEffect(() => {
     async function fetchFaculties() {
       try {
-        const response = await axios.get("http://localhost:3000/getFaculty");
+        const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
         setFaculties(response.data);
       } catch (error) {
         console.log("Error fetching faculties:", error);
@@ -24,15 +24,15 @@ function StudentForm({ studentSaved, updateData }) {
     e.preventDefault();
     const studentData = { name, faculty, aadharCard }; 
     try {
-      const response = await axios.post("http://localhost:3000/saveStudent", studentData);
+      const response = await axios.post("https://attendance-backend-mz8q.onrender.com/saveStudent", studentData);
       if (response.status === 200) {
         console.log("Student Saved:", response.data);
         setName("");
         setFaculty("");
         setAadharCard("");
-        setMessage("Student Saved");
-         
-                studentSaved();
+        setMessage("Student Saved Successfully");
+         // update 
+         studentSaved();
        
       } else {
         console.log("Failed to save student");

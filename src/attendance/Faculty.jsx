@@ -10,13 +10,13 @@ function Faculty({ facultySaved }) {
     const facultyData = { name };
     try {
       const response = await axios.post(
-        "http://localhost:3000/saveFaculty",
+        "https://attendance-backend-mz8q.onrender.com/saveFaculty",
         facultyData
       );
       if (response.status === 200) {
         console.log({ Message: "Faculty Saved" });
         setName("");
-        setMessage("Faculty Saved");
+        setMessage("Faculty Saved Successfully");
         //  update
         facultySaved();
       } else {

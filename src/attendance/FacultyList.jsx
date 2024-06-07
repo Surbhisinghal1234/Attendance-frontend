@@ -6,7 +6,7 @@ function FacultyList({ updateData, facultyUpdated }) {
 
   async function fetchFaculties() {
     try {
-      const response = await axios.get("http://localhost:3000/getFaculty");
+      const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
       // console.log(response);
       if (response.status === 200) {
         setFaculties(response.data);
@@ -24,7 +24,7 @@ function FacultyList({ updateData, facultyUpdated }) {
   async function handleDelete(id) {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/deleteFaculty/${id}`
+        `https://attendance-backend-mz8q.onrender.com/deleteFaculty/${id}`
       );
       //   console.log(response);
       if (response.data === "Faculty Deleted") {
