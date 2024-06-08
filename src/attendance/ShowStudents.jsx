@@ -7,10 +7,14 @@ function ShowStudents({ updateData }) {
   const [students, setStudents] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [messageSaved, setMessageSaved] = useState("");
+  const backendUrl = import.meta.env.BACKEND_URL;
+  const url_back = "http://localhost:3000"
+
+
 
   async function fetchFaculties() {
     try {
-      const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
+      const response = await axios.get(`${url_back}/getFaculty`);
       if (response.status === 200) {
         setTeachers(response.data);
       } else {
@@ -23,7 +27,7 @@ function ShowStudents({ updateData }) {
 
   async function fetchStudents(faculty) {
     try {
-      const response = await axios.get(`https://attendance-backend-mz8q.onrender.com/getStudent?faculty=${faculty}`);
+      const response = await axios.get(`${url_back}/getStudent?faculty=${faculty}`);
       if (response.status === 200) {
         setStudents(response.data);
      
@@ -63,7 +67,7 @@ function ShowStudents({ updateData }) {
   // post 
   async function submitAttendance() {
     try {
-      const response = await axios.post("https://attendance-backend-mz8q.onrender.com/saveAttendance", {
+      const response = await axios.post(`${url_back}/saveAttendance`, {
         faculty: selectedFaculty,
         attendance: attendance
       });
@@ -97,7 +101,7 @@ function ShowStudents({ updateData }) {
           <option value="" disabled>
             Select faculty
           </option>
-          {teachers.map((teacher) => (
+          {Array.isArray(teachers) && teachers.map((teacher) => (
             <option key={teacher._id} value={teacher.name}>
               {teacher.name}
             </option>

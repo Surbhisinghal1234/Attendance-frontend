@@ -3,10 +3,14 @@ import axios from "axios";
 
 function FacultyList({ updateData, facultyUpdated }) {
   const [faculties, setFaculties] = useState([]);
+  const backendUrl = import.meta.env.BACKEND_URL;
+  const url_back = "http://localhost:3000"
+
+
 
   async function fetchFaculties() {
     try {
-      const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
+      const response = await axios.get(`${url_back}/getFaculty`);
       // console.log(response);
       if (response.status === 200) {
         setFaculties(response.data);
@@ -24,7 +28,7 @@ function FacultyList({ updateData, facultyUpdated }) {
   async function handleDelete(id) {
     try {
       const response = await axios.delete(
-        `https://attendance-backend-mz8q.onrender.com/deleteFaculty/${id}`
+        `${url_back}/deleteFaculty/${id}`
       );
       //   console.log(response);
       if (response.data === "Faculty Deleted") {
@@ -46,7 +50,7 @@ function FacultyList({ updateData, facultyUpdated }) {
         Fetch Faculty List
       </h1>
       <ul className="flex flex-col gap-[2rem]">
-        {faculties.map((faculty) => (
+        {Array.isArray(faculties) && faculties.map((faculty) => (
           <li
             key={faculty._id}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-lg"

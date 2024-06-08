@@ -4,13 +4,17 @@ import axios from "axios";
 function Faculty({ facultySaved }) {
   const [name, setName] = useState("");
   const [Message, setMessage] = useState("");
+  const backendUrl = import.meta.env.BACKEND_URL;
+  const url_back = "http://localhost:3000"
+
+  
 
   async function handleSubmit(e) {
     e.preventDefault();
     const facultyData = { name };
     try {
       const response = await axios.post(
-        "https://attendance-backend-mz8q.onrender.com/saveFaculty",
+        `${url_back}/saveFaculty`,
         facultyData
       );
       if (response.status === 200) {

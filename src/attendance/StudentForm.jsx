@@ -7,11 +7,14 @@ function StudentForm({ studentSaved, updateData }) {
   const [aadharCard, setAadharCard] = useState(""); 
   const [faculties, setFaculties] = useState([]);
   const [message, setMessage] = useState("");
+  const backendUrl = import.meta.env.BACKEND_URL;
+  const url_back = "http://localhost:3000"
+
 
   useEffect(() => {
     async function fetchFaculties() {
       try {
-        const response = await axios.get("https://attendance-backend-mz8q.onrender.com/getFaculty");
+        const response = await axios.get(`${url_back}/getFaculty`);
         setFaculties(response.data);
       } catch (error) {
         console.log("Error fetching faculties:", error);
@@ -24,7 +27,7 @@ function StudentForm({ studentSaved, updateData }) {
     e.preventDefault();
     const studentData = { name, faculty, aadharCard }; 
     try {
-      const response = await axios.post("https://attendance-backend-mz8q.onrender.com/saveStudent", studentData);
+      const response = await axios.post(`${url_back}/saveStudent`, studentData);
       if (response.status === 200) {
         console.log("Student Saved:", response.data);
         setName("");
@@ -77,9 +80,10 @@ function StudentForm({ studentSaved, updateData }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm"
         >
           <option value="" disabled>Select faculty</option>
-          {faculties.map((teacher) => (
+          {Array.isArray(faculties) && faculties.map((teacher) => (
             <option key={teacher._id} value={teacher.name}>{teacher.name}</option>
           ))}
+          
         </select>
         <button className="bg-green-600 text-white mt-4  flex justify-center m-auto items-center py-2 px-4 text-sm font-medium rounded-md" type="submit">Save Student</button>
       </form>
