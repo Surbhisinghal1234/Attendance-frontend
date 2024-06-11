@@ -1,79 +1,88 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function ShowStudents({ updateData }) {
-  const [teachers, setTeachers] = useState([]);
-  const [selectedFaculty, setSelectedFaculty] = useState("");
+function ShowStudents() {
+  const [faculty, setFaculty] = useState("");
+  const [faculties, setFaculties] = useState([]);
   const [students, setStudents] = useState([]);
+  const [message, setMessage] = useState("");
   const [attendance, setAttendance] = useState({});
-  const [messageSaved, setMessageSaved] = useState("");
-  const backendUrl = import.meta.env.BACKEND_URL;
-  const url_back = "http://localhost:3000"
+  const [messageSaved,setMessageSaved] = useState("")
 
-
+  useEffect(() => {
+    fetchFaculties();
+  }, []);
 
   async function fetchFaculties() {
     try {
-      const response = await axios.get(`${url_back}/getFaculty`);
+      const response = await axios.get("http://localhost:3000/getFaculty");
       if (response.status === 200) {
-        setTeachers(response.data);
+        // console.log("Faculties fetched successfully", response.data);
+        console.log(response.data, "response.data");
+        setFaculties(response.data);
       } else {
-        console.log("failed");
+        console.log("Failed");
       }
     } catch (error) {
-      console.error("error");
+      console.error("Error", error);
     }
   }
 
   async function fetchStudents(faculty) {
     try {
-      const response = await axios.get(`${url_back}/getStudent?faculty=${faculty}`);
+      const response = await axios.get(
+        `http://localhost:3000/getStudent?faculty=${faculty}`
+      );
       if (response.status === 200) {
+        console.log("Students fetched successfully", response.data);
+
         setStudents(response.data);
-     
+        console.log(response.data.students, "students");
+
+       
+
+        // const initialAttendance = {};
+        // response.data.forEach(student => {
+        //   initialAttendance[student._id] = { name: student.name, status: "A" };
+        // });
+
         const initialAttendance = {};
-        response.data.forEach(student => {
-          initialAttendance[student._id] = { name: student.name, status: "A" };
+        response.data.map(std => {
+          std.students.map(student => {
+            initialAttendance[student.id] = { name: student.name, status: "A" };
+          });
         });
+
         setAttendance(initialAttendance);
       } else {
-        console.log("failed");
+        console.log("Failed");
       }
     } catch (error) {
-      console.error("error");
+      console.error("Error", error);
     }
   }
 
-  useEffect(() => {
-    fetchFaculties();
-  }, [updateData]);
-
-  useEffect(() => {
-    if (selectedFaculty) {
-      fetchStudents(selectedFaculty);
-    }
-  }, [selectedFaculty]);
 
   function toggleAttendance(studentId) {
-    setAttendance(prevAttendance => ({
+    setAttendance((prevAttendance) => ({
       ...prevAttendance,
       [studentId]: {
         ...prevAttendance[studentId],
-        status: prevAttendance[studentId].status === "A" ? "P" : "A"
-      }
+        status: prevAttendance[studentId].status === "A" ? "P" : "A",
+      },
     }));
-  }
+}
 
   // post 
   async function submitAttendance() {
     try {
-      const response = await axios.post(`${url_back}/saveAttendance`, {
-        faculty: selectedFaculty,
-        attendance: attendance
+      const response = await axios.post("http://localhost:3000/saveAttendance", {
+        faculty,
+        attendance: attendance,
       });
       if (response.status === 200) {
         console.log("Attendance submitted successfully");
-        console.log(response, "response");
+        console.log(response, "r");
         setMessageSaved("Attendance submitted successfully");
       } else {
         console.log("failed");
@@ -86,64 +95,84 @@ function ShowStudents({ updateData }) {
   }
 
   return (
-    <>
-      <div className="wrapper mx-auto bg-white rounded-lg max-w-lg p-6 my-[3rem]">
-        <label className="block text-sm font-medium text-gray-700" htmlFor="faculty">
-          Select faculty
+    <div className="wrapper max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-6 text-center">Faculty Students</h1>
+      <div className="mt-4">
+        <label
+          className="block text-sm font-medium text-gray-700"
+          htmlFor="faculty"
+        >
+          Select Faculty
         </label>
         <select
           id="faculty"
-          value={selectedFaculty}
-          onChange={(e) => setSelectedFaculty(e.target.value)}
+          value={faculty}
+          onChange={(e) => {
+            setFaculty(e.target.value);
+            fetchStudents(e.target.value);
+          }}
           required
           className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm"
         >
           <option value="" disabled>
             Select faculty
           </option>
-          {Array.isArray(teachers) && teachers.map((teacher) => (
-            <option key={teacher._id} value={teacher.name}>
-              {teacher.name}
-            </option>
-          ))}
-        </select>
+          {/* {faculties.map((faculty) => (
+            <option key={faculty.id} value={faculty.name}>
+              {faculty.name}
 
-        {students.length > 0 && (
-          <div className="students-list">
-            <ul>
-              {students.map((student) => (
-                <li key={student._id} className="border border-rounded flex justify-between items-center p-2">
-                  {student.name}
-                  <button
+            </option>
+          ))} */}
+          {faculties.map((faculty, index) => {
+            return faculty.facultyList.map((list, ind) => {
+              return (
+                <option key={ind} value={list.name}>
+                  {list.name}
+                </option>
+              );
+            });
+          })}
+        </select>
+      </div>
+    
+      <div className="mt-6">
+        {/* <ul className="mt-3">
+          {
+            students.map((student) => (
+              <li key={student._id} className="text-gray-800 border-2 border-gray-200 px-2 py-1 rounded-sm">{student.name}
+                <button
                     onClick={() => toggleAttendance(student._id)}
                     className="ml-4 px-3 py-1 border rounded-md bg-gray-200"
                   >
                     {attendance[student._id].status}
                   </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {students.length > 0 && (
-          <button
-            onClick={submitAttendance}
-            className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md"
-          >
-            Submit Attendance
-          </button>
-        )}
-        {messageSaved && (
-          <div className="mt-4 text-center">
-            <p className=" text-green-700 text-xl font-bold">{messageSaved}</p>
-          </div>
-        )}
+              </li>
+            ))
+           
+          }
+        </ul> */}
+        {students.map((student) => {
+          return student.students.map((item, ind) => {
+            return <li key={item.id} className="text-gray-800 border-2 border-gray-200 px-2 py-1 rounded-sm">{item.name}
+            
+            <button
+                    onClick={() => toggleAttendance(item.id)}
+                    className="ml-4 px-3 py-1 border rounded-md bg-gray-200"
+                  >
+                      {attendance[item.id]?.status || "A"}
+                  </button>
+            </li>;
+          });
+        })}
       </div>
-    </>
+      <button type="submit"  className="bg-green-600 text-white mt-4  flex justify-center m-auto items-center py-2 px-4 text-sm font-medium rounded-md" onClick={submitAttendance}>Save Attendance</button>
+      {message && (
+        <div className="mt-4 p-4 text-center text-green-500 font-bold text-xl rounded-md">
+          {message}
+        </div>
+      )}
+    </div>
   );
 }
 
 export default ShowStudents;
-
-
-

@@ -1,27 +1,34 @@
-import React,{useState} from 'react'
+import React,{useState,createContext} from 'react'
 import StudentForm from './StudentForm'
 import Faculty from './Faculty'
 import FacultyList from './FacultyList'
 import ShowStudents from './ShowStudents';
 import "../index.css"
 import "./attendance.css"
+export const attendanceContext = createContext()
+import { v4 as uuid } from 'uuid';
 
 
 function Main() {
+// faculty save
+const [facultyList, setFacultyList] = useState([{ id: uuid(), name: ""}]);
 
-    const [updateData, setUpdateData] = useState(false);
+  const [students,setStudents] = useState([{ id: "", name: "", aadharCard: "" }])
 
-    const handleUpdate = () => {
-      setUpdateData(!updateData);
-    };
+  const [faculty,setFaculty] = useState([""])
+
+
   return (
     <>
-    
-      <StudentForm studentSaved={handleUpdate} updateData={updateData} />
-      <Faculty facultySaved={handleUpdate} />
+<attendanceContext.Provider value={{facultyList, setFacultyList,
+students,setStudents, faculty,setFaculty
+}}>
+<StudentForm/>
+<Faculty/>
+ <FacultyList/>
+<ShowStudents />
+</attendanceContext.Provider>
 
-      <FacultyList updateData={updateData} facultyUpdated={handleUpdate} />
-      <ShowStudents updateData={updateData}/>
     </>
   )
 }
