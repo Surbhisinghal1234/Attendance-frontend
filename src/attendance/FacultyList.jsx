@@ -5,8 +5,7 @@ function FacultyList() {
   const [faculties, setFaculties] = useState([]);
   const [selectedFacultyIds, setSelectedFacultyIds] = useState([]);
   const [message, setMessage] = useState("");
-  const backendUrl =
-    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const backendUrl = "http://localhost:3000";
 
   async function fetchFaculties() {
     try {
@@ -34,7 +33,7 @@ function FacultyList() {
         setMessage("Faculty deleted successfully");
         fetchFaculties();
       } else {
-        console.log("Failed", response.data);
+        console.log("failed", response.data);
       }
     } catch (error) {
       console.error("error", error);
@@ -43,7 +42,7 @@ function FacultyList() {
 
   async function handleDeleteMany() {
     try {
-      const response = await axios.delete(`${backendUrl}/deleteFacultyMany`, {
+      const response = await axios.delete("http://localhost:3000/deleteFacultyMany", {
         data: { ids: selectedFacultyIds },
       });
       if (response.data === "Faculty Deleted") {

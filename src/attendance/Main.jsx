@@ -3,10 +3,13 @@ import StudentForm from './StudentForm'
 import Faculty from './Faculty'
 import FacultyList from './FacultyList'
 import ShowStudents from './ShowStudents';
+import ExportAttendance from './ExportAttendance';
 import "../index.css"
 import "./attendance.css"
 export const attendanceContext = createContext()
 import { v4 as uuid } from 'uuid';
+import DisplayStudent from './DisplayStudent';
+
 
 
 function Main() {
@@ -27,7 +30,14 @@ students,setStudents, faculty,setFaculty
 <Faculty/>
  <FacultyList/>
 <ShowStudents />
+<DisplayStudent/>
+< ExportAttendance/>
+
 </attendanceContext.Provider>
+
+
+
+
 
     </>
   )
